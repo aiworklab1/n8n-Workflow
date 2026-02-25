@@ -1,0 +1,659 @@
+{
+  "name": "4-Customer query auto reply agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        848,
+        928
+      ],
+      "id": "dd6e009f-db4a-4762-a94c-38c09a0270fb",
+      "name": "When chat message received",
+      "webhookId": "3d56ef98-cf21-46a8-8359-916cc14c3877"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a customer support assistant.\n\nYour task is to read the user input and classify the customer message into ONE category only:\n\n- Pricing\n- Support\n- General\n\nYou will receive:\n- name\n- gmail\n- message\n\nRules:\n\n1. Analyze ONLY the message to determine the query type.\n2. Do NOT modify or rephrase any provided data.\n3. Return ONLY a valid JSON object.\n4. Do NOT include markdown, backticks, or explanations.\n\nOutput format:\n\n{\n  \"name\": \"<exact name>\",\n  \"gmail\": \"<exact gmail>\",\n  \"message\": \"<exact message>\",\n  \"querytype\": \"<Pricing | Support | General>\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1104,
+        928
+      ],
+      "id": "8c42045b-9f43-4f66-8e94-01263c16711a",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        960,
+        1168
+      ],
+      "id": "04108b0a-9013-4c05-b725-86cda4184b48",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ubBT55iIXfyuupFw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.querytype }}",
+                    "rightValue": "Pricing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "09daee8c-ee2f-450b-889a-e26b9bb08d06"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e8e6a418-5612-44e6-beac-9c92630891c6",
+                    "leftValue": "={{ $json.output.querytype }}",
+                    "rightValue": "Support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "88e2e528-9e81-4c4c-8514-745c3ae91923",
+                    "leftValue": "={{ $json.output.querytype }}",
+                    "rightValue": "General",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        928
+      ],
+      "id": "cfc0642d-9fd8-4d87-b2ca-35dd430f9ee7",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        1184
+      ],
+      "id": "62db52ec-6e5e-4ed4-98ba-075e9bbf55ad",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"name\":\"abd\",\n  \"gmail\": \"California\",\n\t\"inquirydetail\": [\"Los Angeles\", \"San Francisco\", \"San Diego\"],\n  \"querytype\":\"dsff\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        1184
+      ],
+      "id": "63cd8e84-b847-47e3-a0ef-ec00b597767d",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "aammanaapp@gmail.com",
+        "toEmail": "={{ $json.output.gmail }}",
+        "subject": "Support Request Received",
+        "emailFormat": "text",
+        "text": "=Hi {{ $json.output.name }}, \nWe’ve received your issue and our support team will contact you soon. ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1888,
+        992
+      ],
+      "id": "a0c232f9-a07b-4d53-8e13-7b05abf59ce8",
+      "name": "Send an Email",
+      "webhookId": "6d4e5d5c-0a49-4565-9f49-cf4a64d1fb92",
+      "credentials": {
+        "smtp": {
+          "id": "uAx3BBxVTd6866zn",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "aammanaapp@gmail.com",
+        "toEmail": "={{ $json.output.gmail }}",
+        "subject": " Pricing Information",
+        "emailFormat": "text",
+        "text": "=Hi {{ $json.output.name }}, \nThank you for your interest! Our pricing details will be shared shortly. ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1888,
+        768
+      ],
+      "id": "58959c18-1d5a-4dab-afb2-e3f741624a9d",
+      "name": "Send an Email2",
+      "webhookId": "6d4e5d5c-0a49-4565-9f49-cf4a64d1fb92",
+      "credentials": {
+        "smtp": {
+          "id": "uAx3BBxVTd6866zn",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "aammanaapp@gmail.com",
+        "toEmail": "={{ $json.output.gmail }}",
+        "subject": "Thank you for contacting us",
+        "emailFormat": "text",
+        "text": "=Hi {{ $json.output.name }}, \nThanks for reaching out! We’ll get back to you shortly.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1888,
+        1184
+      ],
+      "id": "6e3c3d4a-f37d-4374-b246-c66684284cb9",
+      "name": "Send an Email3",
+      "webhookId": "6d4e5d5c-0a49-4565-9f49-cf4a64d1fb92",
+      "credentials": {
+        "smtp": {
+          "id": "uAx3BBxVTd6866zn",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pricing",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "gmail",
+              "displayName": "gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inquiry",
+              "displayName": "Inquiry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2144,
+        768
+      ],
+      "id": "3a6ced16-2227-45b8-9bcf-3157a7511a19",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleApi": {
+          "id": "5LAwOxK2MHr1z2rT",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2106992603,
+          "mode": "list",
+          "cachedResultName": "Support",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=2106992603"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Switch2').item.json.output.name }}",
+            "Gmail": "={{ $('Switch2').item.json.output.gmail }}",
+            "Inquiry": "={{ $('Switch2').item.json.output.inquirydetail }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gmail",
+              "displayName": "Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inquiry",
+              "displayName": "Inquiry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2160,
+        992
+      ],
+      "id": "aeb93ea8-cd9c-49d9-9e09-d7683c9c0be3",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleApi": {
+          "id": "5LAwOxK2MHr1z2rT",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 232380646,
+          "mode": "list",
+          "cachedResultName": "General",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=232380646"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gmail",
+              "displayName": "Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inquiry",
+              "displayName": "Inquiry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2176,
+        1184
+      ],
+      "id": "38598f7e-954b-4949-8065-e9fb19614c78",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleApi": {
+          "id": "5LAwOxK2MHr1z2rT",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "c530158e-ce86-4e41-969e-3e42826c31a6",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        768
+      ],
+      "id": "7436adaf-d84e-4b1b-b7a4-eee3e3894a6a",
+      "name": "Webhook",
+      "webhookId": "c530158e-ce86-4e41-969e-3e42826c31a6"
+    },
+    {
+      "parameters": {
+        "content": "webhook node:\nwe can add webhook node url in google form app script with the given code paste in app script save it make trigger and then run it but it can only possible on cloud n8n\n var POST_URL = \"enter your webhook URL\";\nfunction onSubmit(e) {\n    var form = FormApp.getActiveForm();\n    var allResponses = form.getResponses();\n    var latestResponse = allResponses[allResponses.length - 1];\n    var response = latestResponse.getItemResponses();\n    var payload = {};\n    for (var i = 0; i < response.length; i++) {\n        var question = response[i].getItem().getTitle();\n        var answer = response[i].getResponse();\n        payload[question] = answer;\n    }\n  \n    var options = {\n        \"method\": \"post\",\n        \"contentType\": \"application/json\",\n        \"payload\": JSON.stringify(payload)\n    };\nUrlFetchApp.fetch(POST_URL, options);\n};",
+        "height": 496,
+        "width": 816
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        688,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "114edaf0-0ae2-4c42-925e-49585653fee0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "serviceAccount",
+        "triggerOn": "specificFile",
+        "fileToWatch": {
+          "__rl": true,
+          "value": "11DfsxOy1HU1l2XWyxuKI-JWp5qKjwhVU50NxTdh3VME",
+          "mode": "list",
+          "cachedResultName": "Query Form",
+          "cachedResultUrl": "https://docs.google.com/forms/d/11DfsxOy1HU1l2XWyxuKI-JWp5qKjwhVU50NxTdh3VME/edit?usp=drivesdk"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        768
+      ],
+      "id": "04386f2d-667c-4e11-99eb-c5c6e0f8466b",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleApi": {
+          "id": "5LAwOxK2MHr1z2rT",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When chat message received": [
+      {
+        "json": {
+          "sessionId": "2403af7f164b431688d011c2c6ff81d9",
+          "action": "sendMessage",
+          "chatInput": "name:abdul rehman\nmy gamil is : aammmanaapp@gmail.com\\ninquiry: i am not satisfy with you customer behavior they didnt  reply me till now even i messaged them 3 months before"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Send an Email2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send an Email3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d9eb30ff-be3a-4b84-b71a-6d907eeda279",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e82e075fcba1d3d91762afecfefe5843ca137e9603a220ee7a5898ad898eb618"
+  },
+  "id": "MZ3KJ9xoz_ldjnFBpwte0",
+  "tags": []
+}
