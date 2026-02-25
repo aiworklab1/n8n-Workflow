@@ -1,0 +1,573 @@
+{
+  "name": "Automatic Lab assesment",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "AGent that take only file",
+        "height": 96
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        368,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "52568738-8e54-4ab4-8e0a-bc1692764cf2",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "formTitle": "upload",
+        "formDescription": "PLZ GIVE THE GIVEN DESCRIPTION",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Reg#"
+            },
+            {
+              "fieldLabel": "Name"
+            },
+            {
+              "fieldLabel": "Section",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "BSCS4TH-A"
+                  },
+                  {
+                    "option": "BSCS4TH-B"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "file",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -1200,
+        -32
+      ],
+      "id": "3f6be114-2267-431e-85da-4123ec460d06",
+      "name": "On form submission",
+      "webhookId": "962e40f4-4eba-4134-bc5a-64e8c9b9a06a"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8055c152-4c7b-4a02-859b-928a80b1e20c",
+              "leftValue": "={{ $json.file[0].filename }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -784,
+        -304
+      ],
+      "id": "8d95a5db-b5d7-4472-862e-49fa29d42a92",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 395978925,
+          "mode": "list",
+          "cachedResultName": "STUDENTPORTALB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=395978925"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Marks": "10",
+            "Reg#": "={{ $json[\"Reg#\"] }}",
+            "Name": "={{ $json.Section }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Reg#",
+              "displayName": "Reg#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Marks",
+              "displayName": "Marks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        -400
+      ],
+      "id": "9fb2baf0-c62c-463b-abf2-d10e1a0cccde",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "0AomquvsAUhhrgyN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 395978925,
+          "mode": "list",
+          "cachedResultName": "STUDENTPORTALB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=395978925"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reg#": "={{ $json[\"Reg#\"] }}",
+            "Name": "={{ $json.Section }}",
+            "Marks": "0"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Reg#",
+              "displayName": "Reg#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Marks",
+              "displayName": "Marks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        -224
+      ],
+      "id": "59932aa3-4a86-4b96-84bd-b7e4a468b26a",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleApi": {
+          "id": "0AomquvsAUhhrgyN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Section }}",
+                    "rightValue": "BSCS4TH-B",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "97a86565-daf2-4b6a-bb3d-f5e1b617cded"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e59ab18f-4b78-43f1-9c16-bf012233ac91",
+                    "leftValue": "={{ $json.Section }}",
+                    "rightValue": "BSCS4TH-A",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -992,
+        -32
+      ],
+      "id": "b5bc8be3-d454-4497-821e-0535d18f809c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "de2889c0-9932-4b79-bfeb-1cb885b57817",
+              "leftValue": "={{ $json.file }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -784,
+        32
+      ],
+      "id": "142af4e7-fe6f-4273-a35e-35870a72b878",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1072398458,
+          "mode": "list",
+          "cachedResultName": "student portalA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=1072398458"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Marks": "10",
+            "Reg#": "={{ $json[\"Reg#\"] }}",
+            "Name": "={{ $json.Section }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Reg#",
+              "displayName": "Reg#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Marks",
+              "displayName": "Marks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        -32
+      ],
+      "id": "cea6f490-48d9-4dd2-acf0-6a1e5d9b11a6",
+      "name": "Append row in sheet4",
+      "credentials": {
+        "googleApi": {
+          "id": "0AomquvsAUhhrgyN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1072398458,
+          "mode": "list",
+          "cachedResultName": "student portalA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=1072398458"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reg#": "={{ $json[\"Reg#\"] }}",
+            "Name": "={{ $json.Section }}",
+            "Marks": "0"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Reg#",
+              "displayName": "Reg#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Marks",
+              "displayName": "Marks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -576,
+        160
+      ],
+      "id": "dfbe9c45-3f8f-406a-9101-d68b832b1e0d",
+      "name": "Append row in sheet5",
+      "credentials": {
+        "googleApi": {
+          "id": "0AomquvsAUhhrgyN",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d9f65d92-9ff2-4c2d-bc11-45c676779b9c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "347971ba1b2d8ababf3ed3b884142c42690f3e50b741ed13840b9895c4e062d1"
+  },
+  "id": "kRc9wJGtjm0Ul6ip",
+  "tags": []
+}
