@@ -1,0 +1,528 @@
+{
+  "name": "1-Simple Workflow Setup on upwork",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Sample workflow",
+        "formDescription": "Plz provide the name,email and description",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Description",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -640,
+        368
+      ],
+      "id": "5c3269f6-4747-4fd6-a87f-b26df5463e16",
+      "name": "On form submission",
+      "webhookId": "9ce5553b-ad5a-4ebd-83a3-c6a120a9b734"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1038973681,
+          "mode": "list",
+          "cachedResultName": "simple workflow agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=1038973681"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Description": "={{ $json.Description }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        368
+      ],
+      "id": "de307b57-8ac4-425e-bad9-ce2024a2a82b",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "0AomquvsAUhhrgyN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        128
+      ],
+      "id": "4e35a8d1-ae74-46a6-9a42-c917f254a62a",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "7gNmqAFhUJE2Sobl",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "aammanaapp@gmail.com",
+        "subject": "Description",
+        "emailFormat": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        128
+      ],
+      "id": "bf21d87a-ba9e-4c10-b6ff-66763097a091",
+      "name": "Send an Email",
+      "webhookId": "c9d82b0b-e26e-4532-9d5f-ee6b71ac96f0",
+      "credentials": {
+        "smtp": {
+          "id": "gr5VK4zxPfhcA1vb",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Workflow #2\nwhenever new row added send email to the customer. ",
+        "height": 256,
+        "width": 592,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "1547d7d9-d9c4-4dfd-bdae-0583b14dc146",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 20,
+              "triggerAtMinute": 32
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        384
+      ],
+      "id": "981e7123-7f4a-4023-80d9-0be4c6805c07",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fromEmail": "aammanaapp@gmail.com",
+        "toEmail": "filz41246@gmail.com",
+        "subject": "Total Entries",
+        "emailFormat": "text",
+        "text": "=Number of entries added today are  {{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        384
+      ],
+      "id": "ae648062-90df-4f84-902c-815f15cef6d8",
+      "name": "Send an Email1",
+      "webhookId": "c4176e88-376d-421d-9b79-82eb438ecca5",
+      "credentials": {
+        "smtp": {
+          "id": "gr5VK4zxPfhcA1vb",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "just get the number of rows added in the google sheet and send it",
+        "options": {
+          "systemMessage": "you are a ai assistant you are just allowedd to calculate the number of rows added in a google sheet in everyday and send that number as output "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        624,
+        384
+      ],
+      "id": "881e6c43-bdb4-41d4-acd1-8d646411f27f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1038973681,
+          "mode": "list",
+          "cachedResultName": "simple workflow agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=1038973681"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        560
+      ],
+      "id": "9ebc9e59-3b93-444d-b5c3-3a561fe78933",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleApi": {
+          "id": "0AomquvsAUhhrgyN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        624,
+        576
+      ],
+      "id": "c4f53a14-8cf1-4dc5-89f1-72a44f050ee8",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YuJ8tlWjwOUXZMz8",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        352,
+        576
+      ],
+      "id": "bde8a25f-00c7-4e40-819c-a4cd4bd3f6fa",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "content": "WORKFLOW #1 \nsave data in google sheet",
+        "height": 320,
+        "width": 1024
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -912,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "fc7d8dff-6557-4026-b81a-6e75058f843e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Workflow #3 \nthat send daily report",
+        "height": 432,
+        "width": 896,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        320,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "fff86e5a-1837-4f52-9a51-ce23a98feea9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "01bcdff3-88cc-4154-a8ff-2fe11b29e7ac",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -640,
+        528
+      ],
+      "id": "0fd34a58-e258-4a49-9c2b-bc3c34e8b0dd",
+      "name": "Webhook2",
+      "webhookId": "01bcdff3-88cc-4154-a8ff-2fe11b29e7ac"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE",
+          "mode": "list",
+          "cachedResultName": "customerquery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1038973681,
+          "mode": "list",
+          "cachedResultName": "simple workflow agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a_z838x4OCA_CJIaNOZFMd6eiar-LN4wunGQffAJXcE/edit#gid=1038973681"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Description": "={{ $json.Description }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -400,
+        528
+      ],
+      "id": "f77b4166-0b3f-44e0-b067-cd38bece73e7",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleApi": {
+          "id": "0AomquvsAUhhrgyN",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send an Email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7b03efab-3be9-4a9c-a34d-b33222720413",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "347971ba1b2d8ababf3ed3b884142c42690f3e50b741ed13840b9895c4e062d1"
+  },
+  "id": "KGZbAYzXrWfGthk3",
+  "tags": []
+}
